@@ -7,7 +7,14 @@ from sqlalchemy import create_engine
 def load_data(messages_filepath, categories_filepath):
     messages =  pd.read_csv(messages_filepath)
     categories = pd.read_csv(categories_filepath, sep = ",")
+
     df = pd.concat([messages, categories], axis = 1)
+    # drop duplicates
+    df.drop("id", axis=1, inplace=True)
+
+    # check number of duplicates
+    df["id"] = messages.id
+
     return df
 
 
@@ -33,13 +40,7 @@ def clean_data(df):
     
     # concatenate the original dataframe with the new `categories` dataframe
     df_1 = pd.concat([df,categories], axis = 1)
-    
-    # drop duplicates
-    df_1.drop("id", axis =1,inplace = True)
-    
-    # check number of duplicates
-    df_1["id"] = messages.id
-    
+        
     return df_1
 
 
