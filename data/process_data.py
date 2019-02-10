@@ -40,14 +40,14 @@ def clean_data(df):
     
     # concatenate the original dataframe with the new `categories` dataframe
     df_1 = pd.concat([df,categories], axis = 1)
-        
+
     return df_1
 
 
 def save_data(df, database_filename):
     engine = create_engine('sqlite:///' + database_filename)
     
-    df.to_sql(database_filename, engine, index=False, chunksize = 500)
+    df.to_sql("Disaster_Response", engine, index=False, chunksize = 500)
 
 
 def main():
