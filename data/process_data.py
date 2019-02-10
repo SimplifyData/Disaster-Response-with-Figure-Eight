@@ -5,7 +5,7 @@ import numpy as np
 from sqlalchemy import create_engine
 
 def load_data(messages_filepath, categories_filepath):
-    messages =  pd.read_csv(message_filepath)
+    messages =  pd.read_csv(messages_filepath)
     categories = pd.read_csv(categories_filepath, sep = ",")
     df = pd.concat([messages, categories], axis = 1)
     return df
@@ -15,6 +15,7 @@ def clean_data(df):
     categories = df.categories.str.split(";", expand = True)
     
     #column names for categories
+    row = categories.iloc[0]
     category_colnames = list(map(lambda x : x[:-2] ,row))
     
     # rename the columns of `categories`
@@ -45,7 +46,7 @@ def clean_data(df):
 def save_data(df, database_filename):
     engine = create_engine('sqlite:///' + database_filename)
     
-    df.to_sql('Disaster_Response', engine, index=False, chunksize = 500) 
+    df.to_sql(database_filename, engine, index=False, chunksize = 500)
 
 
 def main():
