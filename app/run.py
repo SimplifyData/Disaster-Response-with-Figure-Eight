@@ -26,8 +26,8 @@ def tokenize(text):
     return clean_tokens
 
 # load data
-engine = create_engine('sqlite:///../data/YourDatabaseName.db')
-df = pd.read_sql_table('YourTableName', engine)
+engine = create_engine('sqlite:///../data/DisasterResponse.db')
+df = pd.read_sql_table('Disaster_Response', engine)
 
 # load model
 model = joblib.load("../models/your_model_name.pkl")
@@ -42,7 +42,15 @@ def index():
     # TODO: Below is an example - modify to extract data for your own visuals
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
-    
+
+    related = df.related
+    rel_count = related.value_counts()
+    related_names = list(rel_count.index)
+
+    words = pd.Series(' '.join(df['message']).lower().split())
+    popular_words = words[~words.isin(stopwords.words("english"))].value_counts()[:5]
+    popular_words_label = list(popular_words.index)
+
     # create visuals
     # TODO: Below is an example - modify to create your own visuals
     graphs = [
@@ -62,8 +70,46 @@ def index():
                 'xaxis': {
                     'title': "Genre"
                 }
+
+            }
+        },
+        {
+            'data': [
+                Bar(
+                    x= related_names,
+                    y= rel_count
+                )
+            ],
+
+            'layout': {
+                'title': 'Distribution of Message Relevance',
+                'yaxis': {
+                    'title': "Count"
+                },
+                'xaxis': {
+                    'title': "Relevance"
+                }
+            }
+        },
+        {
+            'data': [
+                Bar(
+                    x= popular_words_label,
+                    y= popular_words
+                )
+            ],
+
+            'layout': {
+                'title': 'Top Popular Words',
+                'yaxis': {
+                    'title': "Count"
+                },
+                'xaxis': {
+                    'title': "Words"
+                }
             }
         }
+
     ]
     
     # encode plotly graphs in JSON
